@@ -4,6 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "db:migrate": "npx prisma migrate deploy",
+    "db:generate": "npx prisma generate",
+    "build": "pnpm -C frontend build",
+    "lint": "pnpm -C frontend lint",
     "test": "pnpm run test:frontend && pnpm run test:backend",
     "test:frontend": "pnpm -C frontend test",
     "test:backend": "cd backend && poetry run pytest"
