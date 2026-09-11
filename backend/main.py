@@ -9,6 +9,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from config import IS_DEBUG_ENABLED
 from db import init_db, close_db
 from routes import (
+    auth,
     capabilities,
     screenshot,
     generate_code,
@@ -57,6 +58,7 @@ app.add_middleware(
 )
 
 # Add routes
+app.include_router(auth.router)
 app.include_router(generate_code.router)
 app.include_router(screenshot.router)
 app.include_router(home.router)

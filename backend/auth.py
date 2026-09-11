@@ -8,9 +8,9 @@ from typing import Optional
 import os
 from errors import UnauthorizedError
 
-# Simple in-memory user store (replace with database in production)
-# Format: {api_key: {user_id, org_id, role}}
-VALID_KEYS = {
+# Fallback in-memory keys for demo/testing only
+# In production, API keys are validated via database
+FALLBACK_KEYS = {
     "demo-key-123": {"user_id": "user-1", "org_id": "org-1", "role": "admin"},
     "test-key-456": {"user_id": "user-2", "org_id": "org-2", "role": "user"},
 }
@@ -22,10 +22,11 @@ class AuthContext:
         self.org_id = org_id
         self.role = role
 
-def validate_auth_header(auth_header: str) -> AuthContext:
+async def validate_auth_header(auth_header: str) -> AuthContext:
     """
     Validate authorization header and return AuthContext.
     Supports: Bearer <api_key> format.
+    Looks up API key in database; falls back to demo keys.
     Raises UnauthorizedError if invalid.
     """
     if not auth_header or not auth_header.startswith("Bearer "):
@@ -33,15 +34,28 @@ def validate_auth_header(auth_header: str) -> AuthContext:
 
     api_key = auth_header[7:]
 
-    if api_key not in VALID_KEYS:
-        raise UnauthorizedError("Invalid API key")
+    # Try database lookup first
+    from db import db
 
-    creds = VALID_KEYS[api_key]
-    return AuthContext(
-        user_id=creds["user_id"],
-        org_id=creds["org_id"],
-        role=creds["role"]
-    )
+    db_key = await db.api_key.find_unique(where={"key": api_key})
+    if db_key:
+        # API key found; look up org for role (default to "user")
+        return AuthContext(
+            user_id="",  # WebSocket doesn't require user_id currently
+            org_id=db_key.org_id,
+            role="user"
+        )
+
+    # Fall back to demo/test keys for backwards compatibility
+    if api_key in FALLBACK_KEYS:
+        creds = FALLBACK_KEYS[api_key]
+        return AuthContext(
+            user_id=creds["user_id"],
+            org_id=creds["org_id"],
+            role=creds["role"]
+        )
+
+    raise UnauthorizedError("Invalid API key")
 
 async def get_auth_context(
     authorization: Optional[str] = Header(None),
