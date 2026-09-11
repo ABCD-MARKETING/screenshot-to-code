@@ -887,6 +887,14 @@ class PostProcessingMiddleware(Middleware):
 @router.websocket("/generate-code")
 async def stream_code(websocket: WebSocket):
     """Handle WebSocket code generation requests using a pipeline pattern"""
+    from ws_auth import get_ws_auth_context
+
+    # Authenticate and get auth context
+    try:
+        auth_context = await get_ws_auth_context(websocket)
+    except Exception as e:
+        return  # WebSocket already closed by get_ws_auth_context
+
     pipeline = Pipeline()
 
     # Configure the pipeline
@@ -897,5 +905,6 @@ async def stream_code(websocket: WebSocket):
     pipeline.use(CodeGenerationMiddleware())
     pipeline.use(PostProcessingMiddleware())
 
-    # Execute the pipeline
+    # Execute the pipeline with auth context attached to websocket
+    websocket.scope["auth_context"] = auth_context
     await pipeline.execute(websocket)

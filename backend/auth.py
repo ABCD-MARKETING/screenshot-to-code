@@ -6,6 +6,7 @@ Implements simple API key validation and org isolation.
 from fastapi import Header, HTTPException, status
 from typing import Optional
 import os
+from errors import UnauthorizedError
 
 # Simple in-memory user store (replace with database in production)
 # Format: {api_key: {user_id, org_id, role}}
@@ -20,6 +21,27 @@ class AuthContext:
         self.user_id = user_id
         self.org_id = org_id
         self.role = role
+
+def validate_auth_header(auth_header: str) -> AuthContext:
+    """
+    Validate authorization header and return AuthContext.
+    Supports: Bearer <api_key> format.
+    Raises UnauthorizedError if invalid.
+    """
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise UnauthorizedError("Invalid authorization format. Use: Bearer <api_key>")
+
+    api_key = auth_header[7:]
+
+    if api_key not in VALID_KEYS:
+        raise UnauthorizedError("Invalid API key")
+
+    creds = VALID_KEYS[api_key]
+    return AuthContext(
+        user_id=creds["user_id"],
+        org_id=creds["org_id"],
+        role=creds["role"]
+    )
 
 async def get_auth_context(
     authorization: Optional[str] = Header(None),
