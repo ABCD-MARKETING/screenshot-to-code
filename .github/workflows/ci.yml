@@ -10,6 +10,9 @@ jobs:
   lint-and-test:
     runs-on: ubuntu-latest
 
+    env:
+      DATABASE_URL: postgresql://postgres@localhost:5432/deep_twin_test
+
     services:
       postgres:
         image: postgres:16
@@ -65,8 +68,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Setup database
-        env:
-          DATABASE_URL: postgresql://postgres@localhost:5432/deep_twin_test
         run: pnpm run db:migrate
 
       - name: Generate Prisma client
