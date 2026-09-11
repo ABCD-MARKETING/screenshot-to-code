@@ -70,9 +70,6 @@ jobs:
       - name: Setup database
         run: pnpm run db:migrate
 
-      - name: Generate Prisma client
-        run: pnpm run db:generate
-
       - name: Run frontend build
         run: pnpm run build
 
