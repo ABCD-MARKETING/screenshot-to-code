@@ -884,6 +884,76 @@ class PostProcessingMiddleware(Middleware):
         await next_func()
 
 
+class ProjectOwnershipMiddleware(Middleware):
+    """Verifies project belongs to authenticated organization"""
+
+    async def process(
+        self, context: PipelineContext, next_func: Callable[[], Awaitable[None]]
+    ) -> None:
+        from auth import AuthContext
+        from db import db
+
+        auth_context = context.websocket.scope.get("auth_context")
+        if not isinstance(auth_context, AuthContext):
+            await context.throw_error("Authentication required")
+            return
+
+        # Get project_id from params (must be passed by frontend)
+        project_id = context.params.get("projectId") or context.params.get("project_id")
+        if not project_id:
+            # Project ID may not always be required (e.g., fresh generation)
+            await next_func()
+            return
+
+        try:
+            # Verify project belongs to org
+            project = await db.project.find_unique(where={"id": project_id})
+            if not project or project.org_id != auth_context.org_id:
+                await context.throw_error("Project not found or access denied")
+                return
+        except Exception as e:
+            print(f"[ProjectOwnership] Error verifying project: {e}")
+            await context.throw_error("Failed to verify project ownership")
+            return
+
+        await next_func()
+
+
+class ErrorRecordingMiddleware(Middleware):
+    """Records generation errors and metadata to database"""
+
+    async def process(
+        self, context: PipelineContext, next_func: Callable[[], Awaitable[None]]
+    ) -> None:
+        from auth import AuthContext
+        from db import db
+
+        auth_context = context.websocket.scope.get("auth_context")
+        project_id = context.params.get("projectId") or context.params.get("project_id")
+
+        try:
+            await next_func()
+        except Exception as e:
+            # Record error to database if we have project context
+            if project_id and isinstance(auth_context, AuthContext):
+                try:
+                    await db.render.create(
+                        data={
+                            "id": str(uuid.uuid4()),
+                            "projectId": project_id,
+                            "status": "error",
+                            "error": str(e),
+                            "createdAt": datetime.utcnow(),
+                            "updatedAt": datetime.utcnow(),
+                        }
+                    )
+                except Exception as db_error:
+                    print(f"[ErrorRecording] Failed to record error: {db_error}")
+
+            # Re-raise the exception to let it propagate
+            raise
+
+
 @router.websocket("/generate-code")
 async def stream_code(websocket: WebSocket):
     """Handle WebSocket code generation requests using a pipeline pattern"""
@@ -900,9 +970,11 @@ async def stream_code(websocket: WebSocket):
     # Configure the pipeline
     pipeline.use(WebSocketSetupMiddleware())
     pipeline.use(ParameterExtractionMiddleware())
+    pipeline.use(ProjectOwnershipMiddleware())  # Verify project belongs to org
     pipeline.use(StatusBroadcastMiddleware())
     pipeline.use(PromptCreationMiddleware())
     pipeline.use(CodeGenerationMiddleware())
+    pipeline.use(ErrorRecordingMiddleware())  # Record failures to database
     pipeline.use(PostProcessingMiddleware())
 
     # Execute the pipeline with auth context attached to websocket
