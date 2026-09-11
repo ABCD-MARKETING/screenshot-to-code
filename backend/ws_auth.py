@@ -32,5 +32,13 @@ async def get_ws_auth_context(websocket: WebSocket) -> AuthContext:
         except UnauthorizedError:
             pass
 
+    try:
+        await websocket.send_json({
+            "type": "error",
+            "code": "UNAUTHORIZED",
+            "message": "Authentication required. Provide Bearer token or API key."
+        })
+    except Exception:
+        pass  # Connection may already be closed
     await websocket.close(code=status.WS_1008_POLICY_VIOLATION, reason="Unauthorized")
     raise UnauthorizedError("No valid authentication provided")
