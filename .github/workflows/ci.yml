@@ -111,5 +111,21 @@ jobs:
       - name: Build frontend
         run: pnpm run build
 
-      - name: Notify deployment
-        run: echo "Build successful. Ready for deployment."
+      - name: Deploy to DigitalOcean App Platform
+        if: github.ref == 'refs/heads/main'
+        run: |
+          if [ -z "${{ secrets.DIGITALOCEAN_TOKEN }}" ]; then
+            echo "⚠️  DIGITALOCEAN_TOKEN secret not configured"
+            echo "To enable auto-deployment:"
+            echo "1. Add DO_TOKEN to GitHub secrets (https://github.com/essman929/screenshot-to-code/settings/secrets)"
+            echo "2. Set APP_ID to the DigitalOcean App Platform app ID"
+            echo "3. CI will then auto-deploy on push to main"
+            exit 0
+          fi
+
+          # Trigger DigitalOcean App Platform deployment
+          curl -X POST \
+            -H "Authorization: Bearer ${{ secrets.DIGITALOCEAN_TOKEN }}" \
+            -H "Content-Type: application/json" \
+            "https://api.digitalocean.com/v2/apps/${{ secrets.DO_APP_ID }}/deployments" \
+            -d '{"force_build": true}' || echo "Deployment trigger failed — check tokens"

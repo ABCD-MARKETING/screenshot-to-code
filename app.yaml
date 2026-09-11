@@ -1,0 +1,50 @@
+name: screenshot-to-code
+services:
+- name: web
+  github:
+    branch: main
+    repo: essman929/screenshot-to-code
+  build_command: pnpm run build
+  source_dir: frontend
+  http_port: 3000
+  envs:
+  - key: VITE_API_BASE_URL
+    value: ${services.api.url}
+  - key: VITE_WS_BACKEND_URL
+    value: ${services.api.url}/ws
+  routes:
+  - path: /
+    preserve_path_prefix: false
+
+- name: api
+  github:
+    branch: main
+    repo: essman929/screenshot-to-code
+  build_command: cd backend && poetry install
+  run_command: cd backend && poetry run uvicorn main:app --host 0.0.0.0 --port 8080
+  source_dir: backend
+  http_port: 8080
+  envs:
+  - key: DATABASE_URL
+    value: ${db.connection_string}
+  - key: REDIS_URL
+    value: ${redis.connection_string}
+  health_check:
+    http_path: /health
+
+databases:
+- name: db
+  engine: PG
+  version: "16"
+  production: true
+
+redis:
+- name: redis
+  version: "7"
+  production: true
+
+static_sites:
+- name: docs
+  source_dir: docs
+  routes:
+  - path: /docs
