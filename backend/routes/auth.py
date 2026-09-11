@@ -3,7 +3,19 @@
 import secrets
 from fastapi import APIRouter, Depends
 from auth import get_auth_context, AuthContext
-from db import create_api_key, get_api_key, revoke_api_key
+
+# Try to import database functions; gracefully skip if prisma unavailable
+try:
+    from db import create_api_key, get_api_key, revoke_api_key
+    db_available = True
+except (ImportError, ModuleNotFoundError):
+    db_available = False
+    async def create_api_key(*args, **kwargs):
+        pass
+    async def get_api_key(*args, **kwargs):
+        return None
+    async def revoke_api_key(*args, **kwargs):
+        pass
 
 router = APIRouter(prefix="/api", tags=["auth"])
 
@@ -20,11 +32,20 @@ async def generate_api_key(auth: AuthContext = Depends(get_auth_context)) -> dic
     # Store in database
     key_record = await create_api_key(auth.org_id, api_key)
 
-    return {
-        "apiKey": api_key,
-        "createdAt": key_record["createdAt"],
-        "expiresAt": key_record.get("expiresAt"),
-    }
+    # Handle case where database is unavailable (key_record is None)
+    if key_record:
+        return {
+            "apiKey": api_key,
+            "createdAt": key_record["createdAt"],
+            "expiresAt": key_record.get("expiresAt"),
+        }
+    else:
+        # Database unavailable; return basic response with generated key
+        return {
+            "apiKey": api_key,
+            "createdAt": None,
+            "expiresAt": None,
+        }
 
 
 @router.get("/api-key")

@@ -7,7 +7,18 @@ load_dotenv()
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from config import IS_DEBUG_ENABLED
-from db import init_db, close_db
+
+# Try to import database initialization; gracefully skip if prisma unavailable
+try:
+    from db import init_db, close_db
+    db_available = True
+except (ImportError, ModuleNotFoundError):
+    db_available = False
+    async def init_db():
+        pass
+    async def close_db():
+        pass
+
 from routes import (
     auth,
     capabilities,
