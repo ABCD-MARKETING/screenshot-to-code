@@ -4,11 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "build": "pnpm -C frontend build",
-    "lint": "pnpm -C frontend lint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate deploy",
+    "db:migrate:dev": "prisma migrate dev",
+    "db:push": "prisma db push",
+    "build": "pnpm run db:generate && pnpm -C frontend build",
     "test": "pnpm run test:frontend && pnpm run test:backend",
     "test:frontend": "pnpm -C frontend test",
     "test:backend": "cd backend && poetry run pytest"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.8.0"
+  },
+  "devDependencies": {
+    "prisma": "^5.8.0"
   },
   "workspaces": [
     "frontend",

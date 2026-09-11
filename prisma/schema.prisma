@@ -1,0 +1,80 @@
+// Database schema for screenshot-to-code
+generator client {
+  provider = "prisma-client-py"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Organization {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  users     User[]
+  projects  Project[]
+  renders   Render[]
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  role      String   @default("user") // admin, user
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  renders   Render[]
+  
+  @@index([orgId])
+}
+
+model Project {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  renders   Render[]
+  
+  @@index([orgId])
+}
+
+model Render {
+  id        String   @id @default(cuid())
+  orgId     String
+  org       Organization @relation(fields: [orgId], references: [id])
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id])
+  userId    String
+  user      User @relation(fields: [userId], references: [id])
+  
+  imageUrl  String?
+  code      String?
+  status    String   @default("pending") // pending, processing, complete, failed
+  error     String?
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@index([orgId])
+  @@index([projectId])
+  @@index([userId])
+  @@index([status])
+}
+
+model ApiKey {
+  id        String   @id @default(cuid())
+  orgId     String   @unique
+  key       String   @unique @db.VarChar(255)
+  createdAt DateTime @default(now())
+  expiresAt DateTime?
+  
+  @@index([orgId])
+}
