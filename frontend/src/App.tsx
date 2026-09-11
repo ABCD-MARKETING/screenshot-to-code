@@ -94,6 +94,7 @@ function App() {
       anthropicApiKey: null,
       geminiApiKey: null,
       screenshotOneApiKey: null,
+      authApiKey: null,
       isImageGenerationEnabled: true,
       editorTheme: EditorTheme.COBALT,
       generatedCodeConfig: Stack.HTML_TAILWIND,
@@ -564,7 +565,7 @@ function App() {
         finishInFlightEvents("complete");
         setAppState(AppState.CODE_READY);
       },
-    });
+    }, settings);
   }
 
   // Initial version creation

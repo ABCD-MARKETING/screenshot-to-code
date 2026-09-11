@@ -21,15 +21,16 @@ model Organization {
 
 model User {
   id        String   @id @default(cuid())
-  email     String   @unique
+  email     String
   orgId     String
   org       Organization @relation(fields: [orgId], references: [id])
   role      String   @default("user") // admin, user
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   renders   Render[]
-  
+
+  @@unique([email, orgId])
   @@index([orgId])
 }
 

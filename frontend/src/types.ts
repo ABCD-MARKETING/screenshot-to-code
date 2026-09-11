@@ -17,6 +17,7 @@ export interface Settings {
   openAiBaseURL: string | null;
   replicateApiKey: string | null;
   screenshotOneApiKey: string | null;
+  authApiKey: string | null;
   isImageGenerationEnabled: boolean;
   editorTheme: EditorTheme;
   generatedCodeConfig: Stack;

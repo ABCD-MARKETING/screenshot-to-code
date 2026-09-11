@@ -250,6 +250,50 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
             </div>
           </div>
 
+          {/* Authentication API Key */}
+          <div className="rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/60">
+            <div className="border-b border-gray-100 px-4 py-3 dark:border-zinc-700">
+              <h2 className="text-sm font-medium text-gray-900 dark:text-white">
+                Authentication
+              </h2>
+            </div>
+            <div className="space-y-4 p-4">
+              <div>
+                <p className="text-sm font-medium text-gray-700 dark:text-zinc-300">
+                  API Key
+                </p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
+                  Required for WebSocket authentication. Stored only in your browser.
+                </p>
+                <div className="mt-2 flex gap-2">
+                  <Input
+                    id="auth-api-key"
+                    className="flex-1"
+                    placeholder="Paste your API key here"
+                    value={settings.authApiKey || ""}
+                    onChange={(e) =>
+                      setSettings((s) => ({
+                        ...s,
+                        authApiKey: e.target.value,
+                      }))
+                    }
+                    type="password"
+                  />
+                  <button
+                    className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    onClick={() => {
+                      if (settings.authApiKey) {
+                        navigator.clipboard.writeText(settings.authApiKey);
+                      }
+                    }}
+                  >
+                    Copy
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Image Generation */}
           <div className="rounded-lg border border-gray-200 bg-white dark:border-zinc-700 dark:bg-zinc-800/60">
             <div className="border-b border-gray-100 px-4 py-3 dark:border-zinc-700">
