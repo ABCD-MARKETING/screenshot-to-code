@@ -24,6 +24,9 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
   const [screenshotPreviewAvailable, setScreenshotPreviewAvailable] = useState<
     boolean | null
   >(null);
+  const [generatingKey, setGeneratingKey] = useState(false);
+  const [keyError, setKeyError] = useState<string | null>(null);
+  const [keySuccess, setKeySuccess] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -47,6 +50,38 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
       ...s,
       editorTheme: theme,
     }));
+  };
+
+  const handleGenerateKey = async () => {
+    setGeneratingKey(true);
+    setKeyError(null);
+    setKeySuccess(false);
+
+    try {
+      const response = await fetch(`${HTTP_BACKEND_URL}/api/api-key/generate`, {
+        method: "POST",
+        headers: {
+          "X-API-Key": "demo-key-123", // Use fallback demo key for initial generation
+        },
+      });
+
+      if (!response.ok) {
+        const error = await response.text();
+        throw new Error(error || "Failed to generate API key");
+      }
+
+      const data = await response.json();
+      setSettings((s) => ({
+        ...s,
+        authApiKey: data.apiKey,
+      }));
+      setKeySuccess(true);
+      setTimeout(() => setKeySuccess(false), 3000);
+    } catch (err) {
+      setKeyError(err instanceof Error ? err.message : "Unknown error");
+    } finally {
+      setGeneratingKey(false);
+    }
   };
 
   return (
@@ -265,31 +300,62 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
                 <p className="mt-1 text-xs text-gray-500 dark:text-zinc-400">
                   Required for WebSocket authentication. Stored only in your browser.
                 </p>
-                <div className="mt-2 flex gap-2">
-                  <Input
-                    id="auth-api-key"
-                    className="flex-1"
-                    placeholder="Paste your API key here"
-                    value={settings.authApiKey || ""}
-                    onChange={(e) =>
-                      setSettings((s) => ({
-                        ...s,
-                        authApiKey: e.target.value,
-                      }))
-                    }
-                    type="password"
-                  />
-                  <button
-                    className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
-                    onClick={() => {
-                      if (settings.authApiKey) {
-                        navigator.clipboard.writeText(settings.authApiKey);
-                      }
-                    }}
-                  >
-                    Copy
-                  </button>
-                </div>
+                {settings.authApiKey ? (
+                  <div className="mt-3 space-y-2">
+                    <div className="flex gap-2">
+                      <Input
+                        id="auth-api-key"
+                        className="flex-1"
+                        placeholder="Paste your API key here"
+                        value={settings.authApiKey || ""}
+                        onChange={(e) =>
+                          setSettings((s) => ({
+                            ...s,
+                            authApiKey: e.target.value,
+                          }))
+                        }
+                        type="password"
+                      />
+                      <button
+                        className="rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                        onClick={() => {
+                          if (settings.authApiKey) {
+                            navigator.clipboard.writeText(settings.authApiKey);
+                          }
+                        }}
+                      >
+                        Copy
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleGenerateKey}
+                      disabled={generatingKey}
+                      className="w-full rounded px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50 dark:text-zinc-300 dark:hover:bg-zinc-700"
+                    >
+                      {generatingKey ? "Generating..." : "Generate New Key"}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="mt-3">
+                    <button
+                      onClick={handleGenerateKey}
+                      disabled={generatingKey}
+                      className="w-full rounded bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50 dark:bg-violet-700 dark:hover:bg-violet-600"
+                    >
+                      {generatingKey ? "Generating..." : "Generate API Key"}
+                    </button>
+                  </div>
+                )}
+                {keyError && (
+                  <div className="mt-2 rounded border border-red-200 bg-red-50 p-2 text-xs text-red-700 dark:border-red-700/60 dark:bg-red-900/20 dark:text-red-300">
+                    {keyError}
+                  </div>
+                )}
+                {keySuccess && (
+                  <div className="mt-2 rounded border border-green-200 bg-green-50 p-2 text-xs text-green-700 dark:border-green-700/60 dark:bg-green-900/20 dark:text-green-300">
+                    API key generated successfully!
+                  </div>
+                )}
               </div>
             </div>
           </div>
