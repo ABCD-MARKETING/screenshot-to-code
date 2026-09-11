@@ -34,17 +34,20 @@ async def validate_auth_header(auth_header: str) -> AuthContext:
 
     api_key = auth_header[7:]
 
-    # Try database lookup first
-    from db import db
-
-    db_key = await db.api_key.find_unique(where={"key": api_key})
-    if db_key:
-        # API key found; look up org for role (default to "user")
-        return AuthContext(
-            user_id="",  # WebSocket doesn't require user_id currently
-            org_id=db_key.org_id,
-            role="user"
-        )
+    # Try database lookup first (if db module is available)
+    try:
+        from db import db
+        db_key = await db.api_key.find_unique(where={"key": api_key})
+        if db_key:
+            # API key found; look up org for role (default to "user")
+            return AuthContext(
+                user_id="",  # WebSocket doesn't require user_id currently
+                org_id=db_key.org_id,
+                role="user"
+            )
+    except (ImportError, ModuleNotFoundError):
+        # db module not available (prisma not installed); skip to fallback
+        pass
 
     # Fall back to demo/test keys for backwards compatibility
     if api_key in FALLBACK_KEYS:
@@ -86,13 +89,13 @@ async def get_auth_context(
         )
     
     # Validate API key
-    if api_key not in VALID_KEYS:
+    if api_key not in FALLBACK_KEYS:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API key."
         )
-    
-    creds = VALID_KEYS[api_key]
+
+    creds = FALLBACK_KEYS[api_key]
     return AuthContext(
         user_id=creds["user_id"],
         org_id=creds["org_id"],
