@@ -1,0 +1,64 @@
+name: screenshot-to-code
+region: nyc
+services:
+  - name: api
+    github:
+      repo: essman929/screenshot-to-code
+      branch: main
+      deploy_on_push: true
+    source_dir: backend
+    build_command: pip install poetry && poetry install --no-dev
+    run_command: uvicorn main:app --host 0.0.0.0 --port 8080
+    http_port: 8080
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-0.5gb
+    envs:
+      - key: IS_PROD
+        value: "true"
+        scope: RUN_AND_BUILD_TIME
+      - key: FRONTEND_URL
+        value: ${frontend.PUBLIC_URL}
+        scope: RUN_AND_BUILD_TIME
+      - key: ANTHROPIC_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: OPENAI_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: GEMINI_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: REPLICATE_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: API_SECRET_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+    health_check:
+      http_path: /health
+      initial_delay_seconds: 10
+      period_seconds: 30
+    routes:
+      - path: /api
+        preserve_path_prefix: true
+      - path: /ws
+        preserve_path_prefix: true
+
+static_sites:
+  - name: frontend
+    github:
+      repo: essman929/screenshot-to-code
+      branch: main
+      deploy_on_push: true
+    source_dir: frontend
+    build_command: npm install --global pnpm && pnpm install && pnpm build
+    output_dir: dist
+    index_document: index.html
+    error_document: index.html
+    envs:
+      - key: VITE_WS_BACKEND_URL
+        value: ${api.PUBLIC_URL}
+        scope: BUILD_TIME
+    routes:
+      - path: /
+        preserve_path_prefix: false
