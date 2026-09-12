@@ -340,7 +340,7 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
                     <button
                       onClick={handleGenerateKey}
                       disabled={generatingKey}
-                      className="w-full rounded bg-violet-600 px-4 py-2 text-sm font-medium text-white hover:bg-violet-700 disabled:opacity-50 dark:bg-violet-700 dark:hover:bg-violet-600"
+                      className="w-full rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:opacity-50 dark:bg-blue-700 dark:hover:bg-blue-600"
                     >
                       {generatingKey ? "Generating..." : "Generate API Key"}
                     </button>
@@ -451,7 +451,7 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
                 yourself, add a ScreenshotOne API key.{" "}
                 <a
                   href="https://screenshotone.com?via=screenshot-to-code"
-                  className="text-violet-600 hover:text-violet-700 dark:text-violet-400 dark:hover:text-violet-300"
+                  className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
                   target="_blank"
                 >
                   Get 100 screenshots/mo for free.

@@ -163,7 +163,7 @@ function getEventIcon(type: AgentEventType, toolName?: string) {
     return <BsFileEarmarkPlus className="text-indigo-500" />;
   }
   if (toolName === "edit_file") {
-    return <BsPencilSquare className="text-purple-500" />;
+    return <BsPencilSquare className="text-blue-500" />;
   }
   if (toolName === "generate_images") {
     return <BsImage className="text-pink-500" />;
@@ -172,7 +172,7 @@ function getEventIcon(type: AgentEventType, toolName?: string) {
     return <BsScissors className="text-teal-500" />;
   }
   if (toolName === "edit_images") {
-    return <BsImage className="text-violet-500" />;
+    return <BsImage className="text-blue-500" />;
   }
   if (toolName === "retrieve_option") {
     return <BsFiles className="text-slate-500" />;
@@ -181,7 +181,7 @@ function getEventIcon(type: AgentEventType, toolName?: string) {
     return <BsBookmarkCheck className="text-emerald-500" />;
   }
   if (toolName === "extract_assets") {
-    return <BsBoundingBox className="text-orange-500" />;
+    return <BsBoundingBox className="text-amber-500" />;
   }
   if (toolName === "screenshot_preview") {
     return <BsCamera className="text-cyan-500" />;
@@ -513,7 +513,7 @@ function renderToolDetails(event: AgentEvent, variantCode?: string) {
                         <div className="text-xs font-medium text-gray-700 dark:text-gray-200">
                           Edit {index + 1}
                         </div>
-                        <div className="rounded-full bg-violet-50 px-2 py-0.5 text-[10px] text-violet-600 dark:bg-violet-900/30 dark:text-violet-300">
+                        <div className="rounded-full bg-blue-50 px-2 py-0.5 text-[10px] text-blue-600 dark:bg-blue-900/30 dark:text-blue-300">
                           {aspectRatio}
                         </div>
                       </div>
@@ -1097,7 +1097,7 @@ function AgentActivity() {
         </>
       ) : (
         <>
-          <div className="flex items-center justify-between rounded-xl border border-violet-200 dark:border-violet-800 bg-gradient-to-r from-violet-50 to-white dark:from-violet-900/20 dark:to-zinc-900 px-3 py-2 shadow-[0_0_15px_-3px_rgba(139,92,246,0.3)] dark:shadow-[0_0_15px_-3px_rgba(139,92,246,0.4)] transition-all duration-500">
+          <div className="flex items-center justify-between rounded-xl border border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-white dark:from-blue-900/20 dark:to-zinc-900 px-3 py-2 shadow-[0_0_15px_-3px_rgba(37,99,235,0.3)] dark:shadow-[0_0_15px_-3px_rgba(37,99,235,0.4)] transition-all duration-500">
             <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
               <WorkingPulse />
               <span>Working...</span>
