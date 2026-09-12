@@ -203,6 +203,13 @@
   background-size: 220% 100%;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .working-indicator-bg {
+    animation: none;
+    background-position: 0% 50%;
+  }
+}
+
 @keyframes workingGradientSlide {
   0% {
     background-position: 0% 50%;
