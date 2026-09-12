@@ -4,7 +4,7 @@ import {
   APP_ERROR_WEB_SOCKET_CODE,
   USER_CLOSE_WEB_SOCKET_CODE,
 } from "./constants";
-import { FullGenerationSettings } from "./types";
+import { FullGenerationSettings, Settings } from "./types";
 
 const ERROR_MESSAGE =
   "Error generating code. Check the Developer Console AND the backend logs for details. Feel free to open a Github issue.";
@@ -53,9 +53,17 @@ interface CodeGenerationCallbacks {
 export function generateCode(
   wsRef: React.MutableRefObject<WebSocket | null>,
   params: FullGenerationSettings,
-  callbacks: CodeGenerationCallbacks
+  callbacks: CodeGenerationCallbacks,
+  settings: Settings
 ) {
-  const wsUrl = `${WS_BACKEND_URL}/generate-code`;
+  let wsUrl = `${WS_BACKEND_URL}/generate-code`;
+
+  // Add auth token to query parameters if available
+  if (settings.authApiKey) {
+    const separator = wsUrl.includes("?") ? "&" : "?";
+    wsUrl += `${separator}token=${encodeURIComponent(settings.authApiKey)}`;
+  }
+
   console.log("Connecting to backend @ ", wsUrl);
 
   const ws = new WebSocket(wsUrl);

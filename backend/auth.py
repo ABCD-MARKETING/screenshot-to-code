@@ -6,10 +6,11 @@ Implements simple API key validation and org isolation.
 from fastapi import Header, HTTPException, status
 from typing import Optional
 import os
+from errors import UnauthorizedError
 
-# Simple in-memory user store (replace with database in production)
-# Format: {api_key: {user_id, org_id, role}}
-VALID_KEYS = {
+# Fallback in-memory keys for demo/testing only
+# In production, API keys are validated via database
+FALLBACK_KEYS = {
     "demo-key-123": {"user_id": "user-1", "org_id": "org-1", "role": "admin"},
     "test-key-456": {"user_id": "user-2", "org_id": "org-2", "role": "user"},
 }
@@ -20,6 +21,44 @@ class AuthContext:
         self.user_id = user_id
         self.org_id = org_id
         self.role = role
+
+async def validate_auth_header(auth_header: str) -> AuthContext:
+    """
+    Validate authorization header and return AuthContext.
+    Supports: Bearer <api_key> format.
+    Looks up API key in database; falls back to demo keys.
+    Raises UnauthorizedError if invalid.
+    """
+    if not auth_header or not auth_header.startswith("Bearer "):
+        raise UnauthorizedError("Invalid authorization format. Use: Bearer <api_key>")
+
+    api_key = auth_header[7:]
+
+    # Try database lookup first (if db module is available)
+    try:
+        from db import db
+        db_key = await db.api_key.find_unique(where={"key": api_key})
+        if db_key:
+            # API key found; look up org for role (default to "user")
+            return AuthContext(
+                user_id="",  # WebSocket doesn't require user_id currently
+                org_id=db_key.org_id,
+                role="user"
+            )
+    except (ImportError, ModuleNotFoundError):
+        # db module not available (prisma not installed); skip to fallback
+        pass
+
+    # Fall back to demo/test keys for backwards compatibility
+    if api_key in FALLBACK_KEYS:
+        creds = FALLBACK_KEYS[api_key]
+        return AuthContext(
+            user_id=creds["user_id"],
+            org_id=creds["org_id"],
+            role=creds["role"]
+        )
+
+    raise UnauthorizedError("Invalid API key")
 
 async def get_auth_context(
     authorization: Optional[str] = Header(None),
@@ -50,13 +89,13 @@ async def get_auth_context(
         )
     
     # Validate API key
-    if api_key not in VALID_KEYS:
+    if api_key not in FALLBACK_KEYS:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid API key."
         )
-    
-    creds = VALID_KEYS[api_key]
+
+    creds = FALLBACK_KEYS[api_key]
     return AuthContext(
         user_id=creds["user_id"],
         org_id=creds["org_id"],

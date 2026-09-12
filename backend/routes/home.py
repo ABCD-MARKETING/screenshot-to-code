@@ -9,3 +9,9 @@ async def get_status():
     return HTMLResponse(
         content="<h3>Your backend is running correctly. Please open the front-end URL (default is http://localhost:5173) to use screenshot-to-code.</h3>"
     )
+
+
+@router.get("/health")
+async def health_check():
+    """Health check endpoint for deployment health probes."""
+    return {"status": "ok"}
