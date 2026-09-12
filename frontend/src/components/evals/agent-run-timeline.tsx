@@ -69,7 +69,7 @@ function toolIcon(toolName: string) {
     case "create_file":
       return <BsFileEarmarkPlus className="text-indigo-400" />;
     case "edit_file":
-      return <BsPencilSquare className="text-purple-400" />;
+      return <BsPencilSquare className="text-blue-400" />;
     case "generate_images":
       return <BsImage className="text-pink-400" />;
     case "remove_backgrounds":
@@ -81,7 +81,7 @@ function toolIcon(toolName: string) {
     case "save_assets":
       return <BsBookmarkCheck className="text-emerald-400" />;
     case "extract_assets":
-      return <BsBoundingBox className="text-orange-400" />;
+      return <BsBoundingBox className="text-amber-400" />;
     case "screenshot_preview":
       return <BsCamera className="text-cyan-400" />;
     default:

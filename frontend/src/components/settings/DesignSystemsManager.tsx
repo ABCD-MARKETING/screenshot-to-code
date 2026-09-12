@@ -178,7 +178,7 @@ function DesignSystemsManager({
                 <SelectItem key={designSystem.id} value={designSystem.id}>
                   {designSystem.name}
                   {selectedDesignSystemId === designSystem.id && (
-                    <span className="ml-2 text-xs text-violet-600 dark:text-violet-400">
+                    <span className="ml-2 text-xs text-blue-600 dark:text-blue-400">
                       Default
                     </span>
                   )}
@@ -215,7 +215,7 @@ function DesignSystemsManager({
                 data-testid="design-system-name"
               />
               {isDefault && (
-                <span className="shrink-0 rounded-full bg-violet-100 px-2 py-0.5 text-xs font-medium text-violet-700 dark:bg-violet-900/40 dark:text-violet-300">
+                <span className="shrink-0 rounded-full bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700 dark:bg-blue-900/40 dark:text-blue-300">
                   Default
                 </span>
               )}

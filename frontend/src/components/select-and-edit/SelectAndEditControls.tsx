@@ -18,8 +18,8 @@ export function SelectAndEditToolbarButton() {
       }
       className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition-colors border ${
         inSelectAndEditMode
-          ? "bg-violet-600 border-violet-600 text-white hover:bg-violet-700"
-          : "bg-white border-gray-200 text-gray-600 hover:border-violet-300 hover:text-violet-700 dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-violet-500 dark:hover:text-violet-300"
+          ? "bg-blue-600 border-blue-600 text-white hover:bg-blue-700"
+          : "bg-white border-gray-200 text-gray-600 hover:border-blue-300 hover:text-blue-700 dark:bg-zinc-900 dark:border-zinc-700 dark:text-zinc-300 dark:hover:border-blue-500 dark:hover:text-blue-300"
       }`}
     >
       {inSelectAndEditMode ? (

@@ -1,6 +1,6 @@
 const PROVIDER_BADGE_CLASSES: Record<string, string> = {
   openai: "bg-emerald-900/60 text-emerald-200 border-emerald-700",
-  anthropic: "bg-orange-900/60 text-orange-200 border-orange-700",
+  anthropic: "bg-amber-900/60 text-amber-200 border-amber-700",
   gemini: "bg-sky-900/60 text-sky-200 border-sky-700",
 };
 

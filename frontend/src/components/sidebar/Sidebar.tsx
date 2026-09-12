@@ -297,12 +297,12 @@ function Sidebar({
 
       {/* Prominent banner when viewing an older version */}
       {isViewingOlderVersion && currentVersionNumber !== null && (
-        <div className="shrink-0 border-b border-violet-300 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/30 px-4 py-2.5">
+        <div className="shrink-0 border-b border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/30 px-4 py-2.5">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2 min-w-0">
-              <LuHistory className="w-4 h-4 shrink-0 text-violet-600 dark:text-violet-400" />
+              <LuHistory className="w-4 h-4 shrink-0 text-blue-600 dark:text-blue-400" />
               <div className="min-w-0">
-                <p className="text-sm font-semibold text-violet-900 dark:text-violet-200 truncate">
+                <p className="text-sm font-semibold text-blue-900 dark:text-blue-200 truncate">
                   Viewing v{currentVersionNumber} of {totalVersions}
                 </p>
               </div>
@@ -310,13 +310,13 @@ function Sidebar({
             <div className="flex shrink-0 items-center gap-1.5">
               <button
                 onClick={onOpenVersions}
-                className="rounded-lg border border-violet-400 dark:border-violet-600 px-3 py-1.5 text-xs font-semibold text-violet-800 dark:text-violet-200 hover:bg-violet-100 dark:hover:bg-violet-900/40 transition-colors"
+                className="rounded-lg border border-blue-400 dark:border-blue-600 px-3 py-1.5 text-xs font-semibold text-blue-800 dark:text-blue-200 hover:bg-blue-100 dark:hover:bg-blue-900/40 transition-colors"
               >
                 All versions
               </button>
               <button
                 onClick={() => latestCommitHash && setHead(latestCommitHash)}
-                className="rounded-lg bg-violet-600 hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-400 px-3 py-1.5 text-xs font-semibold text-white dark:text-violet-950 transition-colors"
+                className="rounded-lg bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400 px-3 py-1.5 text-xs font-semibold text-white dark:text-blue-950 transition-colors"
               >
                 Back to latest
               </button>
@@ -332,10 +332,10 @@ function Sidebar({
       >
         {latestChangeSummary && (
           <div className="mb-4 flex flex-col items-end">
-            <div className="inline-block max-w-[85%] rounded-2xl rounded-br-md bg-violet-100 px-4 py-2.5 dark:bg-violet-900/30">
+            <div className="inline-block max-w-[85%] rounded-2xl rounded-br-md bg-blue-100 px-4 py-2.5 dark:bg-blue-900/30">
               <p
                 ref={promptTextRef}
-                className={`text-[13px] text-violet-950 dark:text-violet-100 break-words whitespace-pre-wrap ${
+                className={`text-[13px] text-blue-950 dark:text-blue-100 break-words whitespace-pre-wrap ${
                   !isPromptExpanded ? "line-clamp-[10]" : ""
                 }`}
               >
@@ -343,9 +343,9 @@ function Sidebar({
               </p>
               {selectedElementTag && (
                 <div className="mt-1.5 flex items-center gap-1.5">
-                  <LuMousePointerClick className="w-3 h-3 text-violet-500 dark:text-violet-400" />
-                  <span className="text-[11px] text-violet-600 dark:text-violet-300">
-                    Selected: <code className="font-mono text-[10px] bg-violet-200/60 dark:bg-violet-800/50 px-1 py-0.5 rounded">&lt;{selectedElementTag}&gt;</code>
+                  <LuMousePointerClick className="w-3 h-3 text-blue-500 dark:text-blue-400" />
+                  <span className="text-[11px] text-blue-600 dark:text-blue-300">
+                    Selected: <code className="font-mono text-[10px] bg-blue-200/60 dark:bg-blue-800/50 px-1 py-0.5 rounded">&lt;{selectedElementTag}&gt;</code>
                   </span>
                 </div>
               )}
@@ -366,7 +366,7 @@ function Sidebar({
                     <button
                       key={`${image.slice(0, 40)}-${index}`}
                       onClick={() => setLightboxImage(image)}
-                      className="shrink-0 cursor-zoom-in rounded-lg border border-gray-200 bg-white p-1 dark:border-zinc-700 dark:bg-zinc-900 hover:border-violet-300 dark:hover:border-violet-500 transition-colors"
+                      className="shrink-0 cursor-zoom-in rounded-lg border border-gray-200 bg-white p-1 dark:border-zinc-700 dark:bg-zinc-900 hover:border-blue-300 dark:hover:border-blue-500 transition-colors"
                     >
                       <img
                         src={image}
@@ -395,7 +395,7 @@ function Sidebar({
         )}
 
         {showWorkingIndicator && (
-          <div className="working-indicator-bg mb-3 rounded-xl border border-violet-200 dark:border-violet-800 px-3 py-2 transition-all duration-500">
+          <div className="working-indicator-bg mb-3 rounded-xl border border-blue-200 dark:border-blue-800 px-3 py-2 transition-all duration-500">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                 <WorkingPulse />
@@ -509,9 +509,9 @@ function Sidebar({
           >
             {/* Branching notice when editing an older version */}
             {isViewingOlderVersion && currentVersionNumber !== null && (
-              <div className="mb-2 flex items-center gap-2 rounded-xl border border-violet-300 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 px-3 py-2">
-                <LuHistory className="w-3.5 h-3.5 shrink-0 text-violet-600 dark:text-violet-400" />
-                <span className="text-xs text-violet-800 dark:text-violet-200">
+              <div className="mb-2 flex items-center gap-2 rounded-xl border border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 px-3 py-2">
+                <LuHistory className="w-3.5 h-3.5 shrink-0 text-blue-600 dark:text-blue-400" />
+                <span className="text-xs text-blue-800 dark:text-blue-200">
                   You're editing <span className="font-semibold">v{currentVersionNumber}</span> — updates will create a new version branching from it.
                 </span>
               </div>
@@ -521,30 +521,30 @@ function Sidebar({
             {inSelectAndEditMode && (
               <div className="mb-2">
                 {selectedElement ? (
-                  <div className="flex items-center justify-between rounded-xl border border-violet-300 dark:border-violet-600 bg-violet-50 dark:bg-violet-900/20 px-3 py-2">
+                  <div className="flex items-center justify-between rounded-xl border border-blue-300 dark:border-blue-600 bg-blue-50 dark:bg-blue-900/20 px-3 py-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <LuMousePointerClick className="w-3.5 h-3.5 text-violet-600 dark:text-violet-400 shrink-0" />
-                      <span className="text-sm text-violet-700 dark:text-violet-300 truncate">
-                        Selected: <code className="font-mono text-xs bg-violet-100 dark:bg-violet-800/50 px-1.5 py-0.5 rounded">&lt;{selectedElement.tagName.toLowerCase()}&gt;</code>
+                      <LuMousePointerClick className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                      <span className="text-sm text-blue-700 dark:text-blue-300 truncate">
+                        Selected: <code className="font-mono text-xs bg-blue-100 dark:bg-blue-800/50 px-1.5 py-0.5 rounded">&lt;{selectedElement.tagName.toLowerCase()}&gt;</code>
                       </span>
                     </div>
                     <button
                       onClick={() => setSelectedElement(null)}
-                      className="shrink-0 ml-3 p-0.5 text-violet-400 hover:text-violet-700 dark:hover:text-violet-200 transition-colors"
+                      className="shrink-0 ml-3 p-0.5 text-blue-400 hover:text-blue-700 dark:hover:text-blue-200 transition-colors"
                       title="Clear selection"
                     >
                       <LuX className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 ) : (
-                  <div className="flex items-center justify-between rounded-xl border border-violet-200 dark:border-violet-700 bg-violet-50 dark:bg-violet-900/20 px-3 py-2">
+                  <div className="flex items-center justify-between rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20 px-3 py-2">
                     <div className="flex items-center gap-2">
-                      <LuMousePointerClick className="w-3.5 h-3.5 text-violet-500 dark:text-violet-400 shrink-0" />
-                      <span className="text-sm font-medium text-violet-700 dark:text-violet-300">Click an element to edit it</span>
+                      <LuMousePointerClick className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400 shrink-0" />
+                      <span className="text-sm font-medium text-blue-700 dark:text-blue-300">Click an element to edit it</span>
                     </div>
                     <button
                       onClick={toggleInSelectAndEditMode}
-                      className="shrink-0 ml-3 text-sm text-violet-500 dark:text-violet-400 hover:text-violet-800 dark:hover:text-violet-200 transition-colors"
+                      className="shrink-0 ml-3 text-sm text-blue-500 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 transition-colors"
                     >
                       Exit
                     </button>
@@ -552,7 +552,7 @@ function Sidebar({
                 )}
               </div>
             )}
-            <div className="relative w-full overflow-hidden rounded-2xl border-2 border-violet-300 bg-white transition-all focus-within:border-violet-500 dark:border-violet-500/50 dark:bg-zinc-900 dark:focus-within:border-violet-400">
+            <div className="relative w-full overflow-hidden rounded-2xl border-2 border-blue-300 bg-white transition-all focus-within:border-blue-500 dark:border-blue-500/50 dark:bg-zinc-900 dark:focus-within:border-blue-400">
               <UpdateImagePreview
                 updateImages={updateImages}
                 setUpdateImages={setUpdateImages}
@@ -590,7 +590,7 @@ function Sidebar({
                     data-testid="select-edit-toggle-prompt"
                     className={`rounded-lg p-2 transition-colors ${
                       inSelectAndEditMode
-                        ? "bg-violet-100 text-violet-600 dark:bg-violet-900/30 dark:text-violet-400"
+                        ? "bg-blue-100 text-blue-600 dark:bg-blue-900/30 dark:text-blue-400"
                         : "text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:text-zinc-500 dark:hover:bg-zinc-800 dark:hover:text-zinc-300"
                     }`}
                     title={inSelectAndEditMode ? "Exit selection mode" : "Select an element in the preview to target your edit"}
@@ -604,7 +604,7 @@ function Sidebar({
                   disabled={!updateInstruction.trim()}
                   className={`rounded-xl p-2 transition-colors update-btn ${
                     updateInstruction.trim()
-                      ? "bg-violet-600 text-white hover:bg-violet-700 dark:bg-violet-500 dark:hover:bg-violet-400"
+                      ? "bg-blue-600 text-white hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-400"
                       : "cursor-not-allowed bg-gray-200 text-gray-400 dark:bg-zinc-700 dark:text-zinc-500"
                   }`}
                   title="Send"

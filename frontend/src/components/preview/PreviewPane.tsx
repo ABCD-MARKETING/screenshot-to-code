@@ -126,7 +126,7 @@ function PreviewPane({ settings, onOpenVersions }: Props) {
                     >
                       Scale
                       {desktopScale < 1 && (
-                        <span className="ml-1 text-violet-600 dark:text-violet-300 font-bold">
+                        <span className="ml-1 text-blue-600 dark:text-blue-300 font-bold">
                           ({Math.round(desktopScale * 100)}%)
                         </span>
                       )}

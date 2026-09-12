@@ -74,7 +74,7 @@ function IconStrip({
 
         <button
           onClick={onNewProject}
-          className="flex items-center justify-center rounded-lg p-2 transition-colors bg-violet-100 text-violet-700 hover:bg-violet-200 lg:flex-col lg:gap-1 lg:px-2 lg:py-1.5 dark:bg-violet-900/40 dark:text-violet-200 dark:hover:bg-violet-900/60"
+          className="flex items-center justify-center rounded-lg p-2 transition-colors bg-blue-100 text-blue-700 hover:bg-blue-200 lg:flex-col lg:gap-1 lg:px-2 lg:py-1.5 dark:bg-blue-900/40 dark:text-blue-200 dark:hover:bg-blue-900/60"
           title="Start a new project"
         >
           <LuPlus className="w-[18px] h-[18px]" />
