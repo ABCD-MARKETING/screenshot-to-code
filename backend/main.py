@@ -11,9 +11,20 @@ from starlette.middleware.base import BaseHTTPMiddleware
 from config import IS_DEBUG_ENABLED, IS_PROD
 
 # Try to import database initialization; gracefully skip if prisma unavailable
+# or if DATABASE_URL is not configured (e.g. DO deployment without a DB)
 try:
-    from db import init_db, close_db
-    db_available = True
+    from db import init_db as _init_db, close_db as _close_db
+    import os as _os
+    if not _os.environ.get("DATABASE_URL"):
+        db_available = False
+        async def init_db():
+            pass
+        async def close_db():
+            pass
+    else:
+        db_available = True
+        init_db = _init_db
+        close_db = _close_db
 except (ImportError, ModuleNotFoundError):
     db_available = False
     async def init_db():
