@@ -11,6 +11,8 @@ from starlette.websockets import WebSocketDisconnect
 from websockets.exceptions import ConnectionClosedOK, ConnectionClosedError
 from config import (
     ANTHROPIC_API_KEY,
+    CEREBRAS_API_KEY,
+    DEEPSEEK_API_KEY,
     GEMINI_API_KEY,
     IS_DEBUG_ENABLED,
     IS_PROD,
@@ -259,6 +261,8 @@ class ExtractedParams:
     anthropic_api_key: str | None
     gemini_api_key: str | None
     replicate_api_key: str | None
+    cerebras_api_key: str | None
+    deepseek_api_key: str | None
     openai_base_url: str | None
     generation_type: Literal["create", "update"]
     prompt: UserTurnInput
@@ -312,6 +316,12 @@ class ParameterExtractionStage:
         )
         replicate_api_key = self._get_from_settings_dialog_or_env(
             params, "replicateApiKey", REPLICATE_API_KEY
+        )
+        cerebras_api_key = self._get_from_settings_dialog_or_env(
+            params, "cerebrasApiKey", CEREBRAS_API_KEY
+        )
+        deepseek_api_key = self._get_from_settings_dialog_or_env(
+            params, "deepseekApiKey", DEEPSEEK_API_KEY
         )
 
         # Base URL for OpenAI API
@@ -382,6 +392,8 @@ class ParameterExtractionStage:
             anthropic_api_key=anthropic_api_key,
             gemini_api_key=gemini_api_key,
             replicate_api_key=replicate_api_key,
+            cerebras_api_key=cerebras_api_key,
+            deepseek_api_key=deepseek_api_key,
             openai_base_url=openai_base_url,
             generation_type=generation_type,
             prompt=prompt,
@@ -557,10 +569,12 @@ class AgenticGenerationStage:
         anthropic_api_key: str | None,
         gemini_api_key: str | None,
         replicate_api_key: str | None,
-        should_generate_images: bool,
-        file_state: Dict[str, str] | None,
-        asset_base_url: str,
-        option_codes: List[str] | None,
+        cerebras_api_key: str | None = None,
+        deepseek_api_key: str | None = None,
+        should_generate_images: bool = False,
+        file_state: Dict[str, str] | None = None,
+        asset_base_url: str = "",
+        option_codes: List[str] | None = None,
         should_extract_assets: bool = True,
         generation_id: str | None = None,
         stack: str | None = None,
@@ -573,6 +587,8 @@ class AgenticGenerationStage:
         self.anthropic_api_key = anthropic_api_key
         self.gemini_api_key = gemini_api_key
         self.replicate_api_key = replicate_api_key
+        self.cerebras_api_key = cerebras_api_key
+        self.deepseek_api_key = deepseek_api_key
         self.should_generate_images = should_generate_images
         self.should_extract_assets = should_extract_assets
         self.file_state = file_state
@@ -648,6 +664,8 @@ class AgenticGenerationStage:
                 anthropic_api_key=self.anthropic_api_key,
                 gemini_api_key=self.gemini_api_key,
                 replicate_api_key=self.replicate_api_key,
+                cerebras_api_key=self.cerebras_api_key,
+                deepseek_api_key=self.deepseek_api_key,
                 should_generate_images=self.should_generate_images,
                 should_extract_assets=self.should_extract_assets,
                 asset_base_url=self.asset_base_url,
@@ -832,6 +850,8 @@ class CodeGenerationMiddleware(Middleware):
                 anthropic_api_key=context.extracted_params.anthropic_api_key,
                 gemini_api_key=context.extracted_params.gemini_api_key,
                 replicate_api_key=context.extracted_params.replicate_api_key,
+                cerebras_api_key=context.extracted_params.cerebras_api_key,
+                deepseek_api_key=context.extracted_params.deepseek_api_key,
                 should_generate_images=context.extracted_params.should_generate_images,
                 should_extract_assets=context.extracted_params.should_extract_assets,
                 file_state=context.extracted_params.file_state,

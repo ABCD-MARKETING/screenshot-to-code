@@ -34,6 +34,12 @@ services:
       - key: API_SECRET_KEY
         scope: RUN_AND_BUILD_TIME
         type: SECRET
+      - key: CEREBRAS_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: DEEPSEEK_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
     health_check:
       http_path: /health
       initial_delay_seconds: 10

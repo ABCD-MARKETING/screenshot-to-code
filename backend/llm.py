@@ -40,6 +40,12 @@ class Llm(Enum):
     CLAUDE_FABLE_5_HIGH = "claude-fable-5 (high effort)"
     CLAUDE_FABLE_5_XHIGH = "claude-fable-5 (xhigh effort)"
     CLAUDE_FABLE_5_MAX = "claude-fable-5 (max effort)"
+    # Cerebras
+    CEREBRAS_LLAMA4_SCOUT = "cerebras/llama-4-scout-17b-16e-instruct"
+    CEREBRAS_LLAMA3_70B = "cerebras/llama3.3-70b"
+    # DeepSeek
+    DEEPSEEK_CHAT = "deepseek-chat"
+    DEEPSEEK_REASONER = "deepseek-reasoner"
     # Gemini
     GEMINI_3_FLASH_PREVIEW_HIGH = "gemini-3-flash-preview (high thinking)"
     GEMINI_3_FLASH_PREVIEW_MINIMAL = "gemini-3-flash-preview (minimal thinking)"
@@ -101,6 +107,12 @@ MODEL_PROVIDER: dict[Llm, str] = {
     Llm.CLAUDE_FABLE_5_HIGH: "anthropic",
     Llm.CLAUDE_FABLE_5_XHIGH: "anthropic",
     Llm.CLAUDE_FABLE_5_MAX: "anthropic",
+    # Cerebras models
+    Llm.CEREBRAS_LLAMA4_SCOUT: "cerebras",
+    Llm.CEREBRAS_LLAMA3_70B: "cerebras",
+    # DeepSeek models
+    Llm.DEEPSEEK_CHAT: "deepseek",
+    Llm.DEEPSEEK_REASONER: "deepseek",
     # Gemini models
     Llm.GEMINI_3_FLASH_PREVIEW_HIGH: "gemini",
     Llm.GEMINI_3_FLASH_PREVIEW_MINIMAL: "gemini",
@@ -121,6 +133,8 @@ MODEL_PROVIDER: dict[Llm, str] = {
 OPENAI_MODELS = {m for m, p in MODEL_PROVIDER.items() if p == "openai"}
 ANTHROPIC_MODELS = {m for m, p in MODEL_PROVIDER.items() if p == "anthropic"}
 GEMINI_MODELS = {m for m, p in MODEL_PROVIDER.items() if p == "gemini"}
+CEREBRAS_MODELS = {m for m, p in MODEL_PROVIDER.items() if p == "cerebras"}
+DEEPSEEK_MODELS = {m for m, p in MODEL_PROVIDER.items() if p == "deepseek"}
 
 OPENAI_MODEL_CONFIG: dict[Llm, dict[str, str]] = {
     Llm.GPT_5_4_MINI_LOW: {"api_name": "gpt-5.4-mini", "reasoning_effort": "low"},

@@ -61,7 +61,9 @@ class AgentEngine:
         anthropic_api_key: Optional[str],
         gemini_api_key: Optional[str],
         replicate_api_key: Optional[str],
-        should_generate_images: bool,
+        cerebras_api_key: Optional[str] = None,
+        deepseek_api_key: Optional[str] = None,
+        should_generate_images: bool = False,
         should_extract_assets: bool = True,
         asset_base_url: str = "",
         initial_file_state: Optional[Dict[str, str]] = None,
@@ -76,6 +78,8 @@ class AgentEngine:
         self.anthropic_api_key = anthropic_api_key
         self.gemini_api_key = gemini_api_key
         self.replicate_api_key = replicate_api_key
+        self.cerebras_api_key = cerebras_api_key
+        self.deepseek_api_key = deepseek_api_key
         self.should_generate_images = should_generate_images
         self.should_extract_assets = should_extract_assets
 
@@ -342,6 +346,8 @@ class AgentEngine:
             anthropic_api_key=self.anthropic_api_key,
             gemini_api_key=self.gemini_api_key,
             replicate_api_key=self.replicate_api_key,
+            cerebras_api_key=self.cerebras_api_key,
+            deepseek_api_key=self.deepseek_api_key,
             # Only advertise extraction when the request actually contains a
             # still image the runtime can crop. In particular, Gemini videos
             # share the image_url message shape but are not valid extractor
