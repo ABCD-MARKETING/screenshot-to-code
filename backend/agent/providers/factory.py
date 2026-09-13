@@ -12,8 +12,18 @@ from agent.providers.openai import OpenAIProviderSession, serialize_openai_tools
 from agent.tools import canonical_tool_definitions
 from config import REPLICATE_API_KEY
 from fs_logging.agent_runs import AgentRunRecorder
-from llm import ANTHROPIC_MODELS, GEMINI_MODELS, OPENAI_MODELS, Llm
+from llm import (
+    ANTHROPIC_MODELS,
+    CEREBRAS_MODELS,
+    DEEPSEEK_MODELS,
+    GEMINI_MODELS,
+    OPENAI_MODELS,
+    Llm,
+)
 from preview_screenshot import is_screenshot_preview_available
+
+_CEREBRAS_BASE_URL = "https://api.cerebras.ai/v1"
+_DEEPSEEK_BASE_URL = "https://api.deepseek.com"
 
 
 def create_provider_session(
@@ -25,23 +35,21 @@ def create_provider_session(
     anthropic_api_key: Optional[str],
     gemini_api_key: Optional[str],
     replicate_api_key: Optional[str],
+    cerebras_api_key: Optional[str] = None,
+    deepseek_api_key: Optional[str] = None,
     should_extract_assets: bool = True,
     recorder: Optional[AgentRunRecorder] = None,
 ) -> ProviderSession:
     canonical_tools = canonical_tool_definitions(
         image_generation_enabled=should_generate_images,
-        # The edit_images tool calls Replicate, so don't offer it without a key.
         image_editing_enabled=bool(replicate_api_key or REPLICATE_API_KEY),
-        # The extract_assets tool calls Gemini, so don't offer it without a key.
         asset_extraction_enabled=should_extract_assets and bool(gemini_api_key),
-        # screenshot_preview needs headless Chromium; skip it if it can't launch.
         screenshot_enabled=is_screenshot_preview_available(),
     )
 
     if model in OPENAI_MODELS:
         if not openai_api_key:
             raise Exception("OpenAI API key is missing.")
-
         client = AsyncOpenAI(api_key=openai_api_key, base_url=openai_base_url)
         return OpenAIProviderSession(
             client=client,
@@ -54,7 +62,6 @@ def create_provider_session(
     if model in ANTHROPIC_MODELS:
         if not anthropic_api_key:
             raise Exception("Anthropic API key is missing.")
-
         client = AsyncAnthropic(api_key=anthropic_api_key)
         return AnthropicProviderSession(
             client=client,
@@ -67,13 +74,36 @@ def create_provider_session(
     if model in GEMINI_MODELS:
         if not gemini_api_key:
             raise Exception("Gemini API key is missing.")
-
         client = genai.Client(api_key=gemini_api_key)
         return GeminiProviderSession(
             client=client,
             model=model,
             prompt_messages=prompt_messages,
             tools=serialize_gemini_tools(canonical_tools),
+            recorder=recorder,
+        )
+
+    if model in CEREBRAS_MODELS:
+        if not cerebras_api_key:
+            raise Exception("Cerebras API key is missing.")
+        client = AsyncOpenAI(api_key=cerebras_api_key, base_url=_CEREBRAS_BASE_URL)
+        return OpenAIProviderSession(
+            client=client,
+            model=model,
+            prompt_messages=prompt_messages,
+            tools=serialize_openai_tools(canonical_tools),
+            recorder=recorder,
+        )
+
+    if model in DEEPSEEK_MODELS:
+        if not deepseek_api_key:
+            raise Exception("DeepSeek API key is missing.")
+        client = AsyncOpenAI(api_key=deepseek_api_key, base_url=_DEEPSEEK_BASE_URL)
+        return OpenAIProviderSession(
+            client=client,
+            model=model,
+            prompt_messages=prompt_messages,
+            tools=serialize_openai_tools(canonical_tools),
             recorder=recorder,
         )
 

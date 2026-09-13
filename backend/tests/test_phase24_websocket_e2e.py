@@ -16,54 +16,50 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from auth import FALLBACK_KEYS, validate_auth_header, AuthContext
+from auth import validate_auth_header, AuthContext, _dev_context
 from errors import UnauthorizedError
 
 
 # ──────────────────────────────────────────────────────────────
-# FALLBACK_KEYS shape
+# AuthContext shape
 # ──────────────────────────────────────────────────────────────
-class TestFallbackKeysShape:
-    def test_demo_key_exists(self):
-        assert "demo-key-123" in FALLBACK_KEYS
+class TestAuthContextShape:
+    def test_dev_context_has_required_fields(self):
+        ctx = _dev_context()
+        assert hasattr(ctx, "user_id")
+        assert hasattr(ctx, "org_id")
+        assert hasattr(ctx, "role")
 
-    def test_test_key_exists(self):
-        assert "test-key-456" in FALLBACK_KEYS
+    def test_dev_context_role_is_admin(self):
+        ctx = _dev_context()
+        assert ctx.role == "admin"
 
-    def test_demo_key_has_required_fields(self):
-        creds = FALLBACK_KEYS["demo-key-123"]
-        assert "user_id" in creds
-        assert "org_id" in creds
-        assert "role" in creds
-
-    def test_test_key_has_required_fields(self):
-        creds = FALLBACK_KEYS["test-key-456"]
-        assert "user_id" in creds
-        assert "org_id" in creds
-        assert "role" in creds
-
-    def test_keys_are_different_orgs(self):
-        org1 = FALLBACK_KEYS["demo-key-123"]["org_id"]
-        org2 = FALLBACK_KEYS["test-key-456"]["org_id"]
-        assert org1 != org2
-
-    def test_demo_key_role_is_admin(self):
-        assert FALLBACK_KEYS["demo-key-123"]["role"] == "admin"
+    def test_auth_context_constructor(self):
+        ctx = AuthContext(user_id="u1", org_id="o1", role="user")
+        assert ctx.user_id == "u1"
+        assert ctx.org_id == "o1"
+        assert ctx.role == "user"
 
 
 # ──────────────────────────────────────────────────────────────
 # validate_auth_header
 # ──────────────────────────────────────────────────────────────
 class TestValidateAuthHeader:
-    def test_valid_demo_bearer_returns_context(self):
+    def test_valid_server_key_bearer_returns_context(self, monkeypatch):
         import asyncio
-        ctx = asyncio.run(validate_auth_header("Bearer demo-key-123"))
+        monkeypatch.setenv("API_SECRET_KEY", "test-server-key")
+        import auth
+        auth._SERVER_API_KEY = "test-server-key"
+        ctx = asyncio.run(validate_auth_header("Bearer test-server-key"))
         assert ctx is not None
+        auth._SERVER_API_KEY = ""
+        monkeypatch.delenv("API_SECRET_KEY", raising=False)
 
-    def test_invalid_key_raises_unauthorized(self):
+    def test_invalid_key_accepted_in_dev_mode(self):
+        # In dev mode (IS_PROD not set, no API_SECRET_KEY), any key is accepted
         import asyncio
-        with pytest.raises(UnauthorizedError):
-            asyncio.run(validate_auth_header("Bearer not-a-real-key"))
+        ctx = asyncio.run(validate_auth_header("Bearer not-a-real-key"))
+        assert ctx is not None
 
     def test_empty_token_raises_unauthorized(self):
         import asyncio

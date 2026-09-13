@@ -12,6 +12,10 @@ OPENAI_BASE_URL = os.environ.get("OPENAI_BASE_URL", None)
 # Image generation (optional)
 REPLICATE_API_KEY = os.environ.get("REPLICATE_API_KEY", None)
 
+# Additional LLM providers (OpenAI-compatible)
+CEREBRAS_API_KEY = os.environ.get("CEREBRAS_API_KEY", None)
+DEEPSEEK_API_KEY = os.environ.get("DEEPSEEK_API_KEY", None)
+
 # Debugging-related
 IS_DEBUG_ENABLED = bool(os.environ.get("IS_DEBUG_ENABLED", False))
 DEBUG_DIR = os.environ.get("DEBUG_DIR", "")

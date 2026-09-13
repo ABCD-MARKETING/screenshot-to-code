@@ -4,9 +4,11 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
-from config import IS_DEBUG_ENABLED
+from starlette.middleware.base import BaseHTTPMiddleware
+from config import IS_DEBUG_ENABLED, IS_PROD
 
 # Try to import database initialization; gracefully skip if prisma unavailable
 try:
@@ -59,13 +61,42 @@ async def shutdown_services() -> None:
     """Close database connection"""
     await close_db()
 
-# Configure CORS settings
+# Security headers middleware
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        response: Response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["X-XSS-Protection"] = "1; mode=block"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        if IS_PROD:
+            response.headers["Strict-Transport-Security"] = (
+                "max-age=31536000; includeSubDomains"
+            )
+        return response
+
+app.add_middleware(SecurityHeadersMiddleware)
+
+# CORS: lock to frontend origin in prod; allow localhost in dev
+_frontend_url = os.environ.get("FRONTEND_URL", "").rstrip("/")
+if IS_PROD and _frontend_url:
+    _allowed_origins = [_frontend_url]
+    _allow_credentials = True
+else:
+    _allowed_origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+    ]
+    _allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_origins=_allowed_origins,
+    allow_credentials=_allow_credentials,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-API-Key"],
 )
 
 # Add routes

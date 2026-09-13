@@ -5,7 +5,6 @@
 
 name: screenshot-to-code
 region: nyc
-
 services:
   - name: api
     github:
@@ -19,6 +18,12 @@ services:
     instance_count: 1
     instance_size_slug: apps-s-1vcpu-0.5gb
     envs:
+      - key: IS_PROD
+        value: "true"
+        scope: RUN_AND_BUILD_TIME
+      - key: FRONTEND_URL
+        value: ${frontend.PUBLIC_URL}
+        scope: RUN_AND_BUILD_TIME
       - key: ANTHROPIC_API_KEY
         scope: RUN_AND_BUILD_TIME
         type: SECRET
@@ -29,6 +34,15 @@ services:
         scope: RUN_AND_BUILD_TIME
         type: SECRET
       - key: REPLICATE_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: API_SECRET_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: CEREBRAS_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: DEEPSEEK_API_KEY
         scope: RUN_AND_BUILD_TIME
         type: SECRET
     health_check:
