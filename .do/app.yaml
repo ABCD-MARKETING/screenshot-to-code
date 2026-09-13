@@ -1,3 +1,8 @@
+# DigitalOcean App Platform spec
+# Deploys automatically from main branch on every push
+# Create the app at: https://cloud.digitalocean.com/apps/new
+# Choose GitHub → essman929/screenshot-to-code → main branch → "Use existing spec (.do/app.yaml)"
+
 name: screenshot-to-code
 region: nyc
 services:
