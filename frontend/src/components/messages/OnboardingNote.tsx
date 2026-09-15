@@ -1,6 +1,6 @@
 export function OnboardingNote() {
   return (
-    <div className="flex flex-col space-y-4 bg-green-700 p-2 rounded text-stone-200 text-sm">
+    <div className="flex flex-col space-y-4 bg-green-700 dark:bg-green-800 p-2 rounded text-white text-sm">
       <span>
         To use Screenshot to Code,{" "}
         <a

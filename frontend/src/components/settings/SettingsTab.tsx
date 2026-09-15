@@ -58,11 +58,13 @@ function SettingsTab({ settings, setSettings, appTheme, setAppTheme }: Props) {
     setKeySuccess(false);
 
     try {
+      const headers: Record<string, string> = {};
+      if (settings.authApiKey) {
+        headers["X-API-Key"] = settings.authApiKey;
+      }
       const response = await fetch(`${HTTP_BACKEND_URL}/api/api-key/generate`, {
         method: "POST",
-        headers: {
-          "X-API-Key": "demo-key-123", // Use fallback demo key for initial generation
-        },
+        headers,
       });
 
       if (!response.ok) {
